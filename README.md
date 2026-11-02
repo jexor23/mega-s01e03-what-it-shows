@@ -34,3 +34,14 @@ Support desk. Decision records: whoever signed them.
 ---
 
 Exported 2026-10-04 from the `support` repo, `apps/kb/` → `src/`.
+
+## Added in this repo (MEGA S01E03)
+
+- `src/routes/kb/incidents/4471-split/+page.svx`: signed page, "#4471 · three problems, not one".
+- `src/lib/kb/problems.ts`, `src/lib/kb/ProblemTable.svelte`: the logic and table behind it.
+- `rendered/4471-split.html`: that page as the desk sees it (prerendered, CSS inlined, no scripts).
+- `package.json`, `vite.config.js`, `src/app.html`, `src/routes/+layout.ts`, `scripts/standalone.mjs`:
+  the build frame. `npm install && npm run build` renders every kb page to `build/`, then
+  `node scripts/standalone.mjs kb/incidents/4471-split rendered/4471-split.html`.
+
+Existing pages, decisions and components are unchanged.
