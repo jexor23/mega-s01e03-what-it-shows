@@ -1,6 +1,6 @@
 ---
 layout: runbook
-title: '#4471 · two problems, not one'
+title: '#4471 · three problems, not one'
 owner: Jerzy Wach
 status: open
 reviewed: 2026-11-02
@@ -14,11 +14,12 @@ signature: Jerzy Wach
 </script>
 
 [#4471](/kb/incidents/4471) says: one issue, one fix queued. Read by cause instead of by subject
-line, the reports merged into it are two problems. Each has its own fix, and each now has its
+line, the reports merged into it are three problems. Each has its own fix, and each now has its
 own ticket.
 
 <Callout kind="warn">
-The queued parser fix does not close #4471. The booking-v3 hint stays broken after it ships.
+The queued parser fix does not close #4471. The booking-v3 hint and the one-day move stay broken
+after it ships.
 </Callout>
 
 ## The tickets
@@ -27,8 +28,10 @@ The queued parser fix does not close #4471. The booking-v3 hint stays broken aft
 |---|---|---|
 | The shared parser reads every date month first | row `parser` | [jexor23/mega-s01e03-what-it-shows#1](https://github.com/jexor23/mega-s01e03-what-it-shows/issues/1) |
 | booking-v3 prints `MM/DD/YYYY` for day-first tenants | row `hint` | [jexor23/mega-s01e03-what-it-shows#2](https://github.com/jexor23/mega-s01e03-what-it-shows/issues/2) |
+| Dates move one day earlier | the note under the table: reports read as a one-day move | [jexor23/mega-s01e03-what-it-shows#4](https://github.com/jexor23/mega-s01e03-what-it-shows/issues/4) |
 
-Each ticket carries the count of its row in the table below and the ids of the reports it covers.
+Each ticket carries how many reports it covers and their ids. No report is in two tickets: the
+parser ticket counts the `parser` row without the one-day moves from the note under the table.
 
 ## What #4471 holds
 
@@ -37,6 +40,7 @@ Each ticket carries the count of its row in the table below and the ids of the r
 The table counts each report id once: the ticket export pages overlap, so some reports come
 twice. A report's cause comes from its tenant (locale and booking form), not from intake's tag,
 which is a guess from the reporter's browser; the "tagged as" column shows how often they differ.
+The one-day moves stay filed under `parser` by tenant in this table; they have their own ticket.
 
 ## 1 · `parser`: the shared parser reads dates month first
 
@@ -45,11 +49,6 @@ date with a day of 12 or less comes out with day and month swapped: "Booked for 
 invite says 4 July." It reaches the desk through the app, email and booking-v2 forms of all
 tenants. Fix: parse with the tenant's locale, not a fixed month-first order.
 Ticket: [#1](https://github.com/jexor23/mega-s01e03-what-it-shows/issues/1).
-
-The note under the table names the reports the desk read as a one-day move. They stay filed under
-`parser` by tenant and are counted in #1. Their dates move back one day instead of swapping
-("Invite says Tuesday 12 May. Calendar says Monday 11 May."), so check them again once the parser
-fix ships: if they still come in, look at how a date-only value passes through a time zone.
 
 ## 2 · `hint`: booking-v3 tells day-first tenants to type the month first
 
@@ -61,10 +60,21 @@ reports sent through the booking-v3 form belong here. Fix: print the hint from t
 locale (`DD/MM/YYYY` for these tenants), as booking-v2 does.
 Ticket: [#2](https://github.com/jexor23/mega-s01e03-what-it-shows/issues/2).
 
+## 3 · one-day move: dates move one day earlier
+
+These are not swaps. "Invite says Tuesday 12 May. Calendar says Monday 11 May." "Tuesday
+6 October showed as Monday." "Client in Lisbon got Tuesday. Client in Toronto got Monday. Same
+meeting." The date moves back one day, and which day a reader sees depends on where they are.
+That points to a date-only value converted through a time zone (stored or sent as midnight UTC,
+shown in local time), not to the date order. Neither the parser fix nor the hint fix touches it.
+The desk had already read these as one-day moves (`desk-notes.json`). R-41236 ("the invite
+arrived before I made the booking") has no dates in it; it stays here with the desk's reading.
+Ticket: [#4](https://github.com/jexor23/mega-s01e03-what-it-shows/issues/4).
+
 ## What this means for the desk
 
-- #4471 stays open only for `parser`. The `hint` problem is tracked in its own ticket.
-- Decision 0001 merges by subject line. These two problems share subject lines, so the rule put
+- #4471 stays open only for `parser`. The other two problems are tracked in their own tickets.
+- Decision 0001 merges by subject line. These three problems share subject lines, so the rule put
   them in one ticket. Decision 0001 is accepted and is not edited here; a new decision record
   should replace it with "merge when the cause is the same", which `DedupeExplorer` already
   computes.
