@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<title>#4471 · three problems, three tickets · support kb</title>
+		<style>:root{--bg: #fbfaf7;--fg: #1d1d1b;--muted: #6b6a66;--line: #e3e0d8;--accent: #2f6f5e;--warn: #b4501f;--warn-bg: #fbeee6;--note-bg: #eef5f2;--mono: ui-monospace, "Cascadia Code", Menlo, monospace}@media(prefers-color-scheme:dark){:root{--bg: #171716;--fg: #ecebe6;--muted: #9c9a93;--line: #34332f;--accent: #6fbfa6;--warn: #f0905d;--warn-bg: #3a2418;--note-bg: #1d2c27}}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,sans-serif}.kb table{border-collapse:collapse;width:100%;margin:1rem 0;font-size:.92rem}.kb th,.kb td{border-bottom:1px solid var(--line);padding:.35rem .5rem;text-align:left}.kb code{font-family:var(--mono);font-size:.88em}.kb a{color:var(--accent)}.kb.svelte-e2jw2j{max-width:760px;margin:0 auto;padding:2rem 16px 4rem}.crumb.svelte-e2jw2j{font:.8rem var(--mono);text-decoration:none;color:var(--muted)}h1.svelte-e2jw2j{margin:.25rem 0 .5rem;line-height:1.2}.meta.svelte-e2jw2j{display:flex;flex-wrap:wrap;gap:.5rem 1rem;color:var(--muted);font-size:.85rem;margin:0}.status.svelte-e2jw2j{border:1px solid var(--line);border-radius:99px;padding:0 .6rem}.stale.svelte-e2jw2j{color:var(--warn);font-weight:600}.banner.svelte-e2jw2j{background:var(--warn-bg);color:var(--warn);padding:.6rem 1rem;border-radius:6px}footer.svelte-e2jw2j{margin-top:3rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--line);padding-top:1rem}
+</style>
+		<style>aside.svelte-17bri61{border-left:4px solid var(--accent);padding:.5rem 1rem;margin:1rem 0;background:var(--note-bg)}aside.warn.svelte-17bri61{border-color:var(--warn);background:var(--warn-bg)}
+</style>
+		<style>.sum.svelte-12oyimm{font-size:1.1rem}.tags.svelte-12oyimm,.note.svelte-12oyimm{color:var(--muted);font-size:.85em}.wrong.svelte-12oyimm td:where(.svelte-12oyimm){background:var(--warn-bg)}.wrong.svelte-12oyimm td:where(.svelte-12oyimm):last-child{color:var(--warn);font-weight:600}
+</style>
+		<style>.stamp.svelte-1280m42{margin:2rem 0 0;font:.85rem var(--mono);color:var(--muted)}.stamp.svelte-1280m42 b:where(.svelte-1280m42){color:var(--accent);letter-spacing:.04em}.missing.svelte-1280m42{color:var(--warn)}
+</style>
+  </head>
+  <body data-sveltekit-preload-data="hover">
+    <div style="display: contents"><div class="kb svelte-e2jw2j"><header><a class="crumb svelte-e2jw2j" href="/kb">support desk · kb</a> <h1 class="svelte-e2jw2j">#4471 · three problems, three tickets</h1> <p class="meta svelte-e2jw2j"><span>owner <b>support desk</b></span> <span class="status open svelte-e2jw2j">open</span> <span class="svelte-e2jw2j">reviewed 2026-11-11 · 0 days ago</span></p></header>  <main><p>The desk merged <strong>412 reports</strong> into #4471 as one issue and marked it known. Its own
+view of the ticket, rendered below from the export, already shows more than one problem: two
+causes, and a note about reports that read as a one-day move.</p> <h2>What the desk’s view shows</h2> <p class="sum svelte-12oyimm"><strong>412</strong> reports merged into #4471 · <strong>2</strong> causes</p> <table><thead><tr><th>cause</th><th>reports</th><th>tagged as</th><th>tenants</th><th>seen</th><th></th></tr></thead><tbody><tr class="svelte-12oyimm"><td class="svelte-12oyimm"><code>parser</code></td><td class="svelte-12oyimm">379</td><td class="tags svelte-12oyimm">parser ×356 · hint ×23</td><td class="svelte-12oyimm">11</td><td class="svelte-12oyimm">2026-04-01 → 2026-10-04</td><td class="svelte-12oyimm">#4471</td></tr><tr class="svelte-12oyimm wrong"><td class="svelte-12oyimm"><code>hint</code></td><td class="svelte-12oyimm">33</td><td class="tags svelte-12oyimm">hint ×18 · parser ×15</td><td class="svelte-12oyimm">3</td><td class="svelte-12oyimm">2026-04-17 → 2026-09-22</td><td class="svelte-12oyimm">not this ticket — no ticket of its own</td></tr></tbody></table> <p class="note svelte-12oyimm">5 reports read as a one-day move; filed under <code>parser</code> by tenant.</p> <h2>The problems in #4471</h2> <p>Each problem now has a ticket of its own. Every report in #4471 is in exactly one of them.</p> <table><thead><tr><th>ticket</th><th>problem</th><th>reports</th><th>tenants</th><th>seen</th></tr></thead><tbody><tr><td><a href="https://github.com/jexor23/mega-s01e03-what-it-shows/issues/1">#1</a></td><td>The shared parser reads day-first dates month first</td><td>374</td><td>11</td><td>2026-04-01 → 2026-10-04</td></tr><tr><td><a href="https://github.com/jexor23/mega-s01e03-what-it-shows/issues/2">#2</a></td><td>The booking-v3 form hints MM/DD/YYYY to day-first tenants</td><td>33</td><td>3</td><td>2026-04-17 → 2026-09-22</td></tr><tr><td><a href="https://github.com/jexor23/mega-s01e03-what-it-shows/issues/3">#3</a></td><td>Dates move by one day</td><td>5</td><td>5</td><td>2026-04-02 → 2026-10-04</td></tr></tbody></table> <p>412 of 412 reports placed.</p> <h3>Ticket 1 · the parser</h3> <p>People see the day and the month swap: a booking for 2 December comes out on 12 February. The
+shared parser reads every date month first, and every tenant on file writes the day first. This
+ticket holds the reports the desk files under <code>parser</code> by tenant, without the ones it read as a
+one-day move. <a href="https://github.com/jexor23/mega-s01e03-what-it-shows/issues/1" rel="nofollow">Ticket 1</a>.</p> <h3>Ticket 2 · the booking-v3 date hint</h3> <p>These come only through the booking-v3 form, at day-first tenants. The form prints <code>MM/DD/YYYY</code> under its date field, people type the month first as it tells them, and the form reads the date
+the tenant’s way. A parser fix does not close this one: the hint must change. The desk’s table
+marks this row “no ticket of its own”; now it has one. <a href="https://github.com/jexor23/mega-s01e03-what-it-shows/issues/2" rel="nofollow">Ticket 2</a>.</p> <h3>Ticket 3 · the one-day move</h3> <p>Here the date does not swap; it moves by one day. “Invite says Tuesday 12 May. Calendar says
+Monday 11 May.” One meeting showed Tuesday in Lisbon and Monday in Toronto. That points at a
+date-only value that goes through a time-zone conversion, not at the parser. The desk read these
+reports as a one-day move (its notes) but files them under <code>parser</code> by tenant, so they were
+hidden in that row. <a href="https://github.com/jexor23/mega-s01e03-what-it-shows/issues/3" rel="nofollow">Ticket 3</a>.</p> <h2>How this was counted</h2> <ul><li>One id, one report. The export comes in pages that overlap, so its 427 rows hold 412 reports.</li> <li>The cause comes from the tenant, with the desk’s own <code>causes.ts</code>, not from intake’s tag. Intake guessed from the reporter’s browser, and it disagrees with the tenant on 38 reports.</li> <li>The one-day moves are the reports in the desk’s notes (<code>desk-notes.json</code>), taken out of the row they are filed under.</li> <li>Every number on this page is computed from the export when the page renders.</li></ul> <aside class="warn svelte-17bri61">Not one bug. The queued parser fix closes ticket 1 only. Ticket 2 needs the booking-v3 hint
+changed, and ticket 3 needs the time-zone handling of dates checked.</aside> <p class="stamp svelte-1280m42">desk ref <b class="svelte-1280m42">DR-8XC5-EZBH</b></p></main> <footer class="svelte-e2jw2j">Pages are written by people. Tables and charts are built from data at render time.</footer></div> 
+			
+			
+		</div>
+  </body>
+</html>

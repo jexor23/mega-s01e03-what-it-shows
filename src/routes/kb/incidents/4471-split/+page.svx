@@ -1,0 +1,98 @@
+---
+layout: runbook
+title: '#4471 · three problems, three tickets'
+owner: support desk
+status: open
+reviewed: 2026-11-11
+signature: 'v1.eyJzdWIiOiIxMTM0IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTQ0MjcyOTAsImV4cCI6MTc5NDUxMzY5MH0.hSXJhvQ62bgSPiZ9mu5peVs2v4xdOqcpGoC2TkFPMmI'
+---
+
+<script>
+  import reports from '#lib/data/reports-4471.json';
+  import notes from '#lib/data/desk-notes.json';
+  import { groupByCause, uniqueById } from '#lib/kb/causes';
+  import { tenantOf } from '#lib/kb/locales';
+  import CauseTable from '#lib/kb/CauseTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+
+  // The desk's own view of #4471, as exported: one id, one report; the cause comes from the tenant.
+  const merged = uniqueById(reports).filter((r) => r.mergedInto === 4471);
+  const groups = groupByCause(merged, tenantOf);
+  const read = (r) => notes.oneDayMove.includes(r.id);
+  const filed = (cause) => (groups.find((g) => g.cause === cause)?.reports ?? []).filter((r) => !read(r));
+
+  const issues = 'https://github.com/jexor23/mega-s01e03-what-it-shows/issues';
+  const tickets = [
+    { n: 1, problem: 'The shared parser reads day-first dates month first', reports: filed('parser') },
+    { n: 2, problem: 'The booking-v3 form hints MM/DD/YYYY to day-first tenants', reports: filed('hint') },
+    { n: 3, problem: 'Dates move by one day', reports: merged.filter(read) },
+  ];
+  const placed = tickets.reduce((n, t) => n + t.reports.length, 0);
+  const tenants = (rs) => new Set(rs.map((r) => r.tenant)).size;
+  const seen = (rs) => {
+    const days = rs.map((r) => r.receivedAt.slice(0, 10)).sort();
+    return `${days[0]} → ${days[days.length - 1]}`;
+  };
+  const intakeDisagrees = groups.reduce((n, g) => n + g.reports.filter((r) => r.meta.intakeTag !== g.cause).length, 0);
+</script>
+
+The desk merged **{merged.length} reports** into #4471 as one issue and marked it known. Its own
+view of the ticket, rendered below from the export, already shows more than one problem: two
+causes, and a note about reports that read as a one-day move.
+
+## What the desk's view shows
+
+<CauseTable ticket={4471} />
+
+## The problems in #4471
+
+Each problem now has a ticket of its own. Every report in #4471 is in exactly one of them.
+
+<table>
+  <thead><tr><th>ticket</th><th>problem</th><th>reports</th><th>tenants</th><th>seen</th></tr></thead>
+  <tbody>
+    {#each tickets as t (t.n)}
+      <tr><td><a href="{issues}/{t.n}">#{t.n}</a></td><td>{t.problem}</td><td>{t.reports.length}</td><td>{tenants(t.reports)}</td><td>{seen(t.reports)}</td></tr>
+    {/each}
+  </tbody>
+</table>
+
+<p>{placed} of {merged.length} reports placed.</p>
+
+### Ticket 1 · the parser
+
+People see the day and the month swap: a booking for 2 December comes out on 12 February. The
+shared parser reads every date month first, and every tenant on file writes the day first. This
+ticket holds the reports the desk files under `parser` by tenant, without the ones it read as a
+one-day move. [Ticket 1](https://github.com/jexor23/mega-s01e03-what-it-shows/issues/1).
+
+### Ticket 2 · the booking-v3 date hint
+
+These come only through the booking-v3 form, at day-first tenants. The form prints `MM/DD/YYYY`
+under its date field, people type the month first as it tells them, and the form reads the date
+the tenant's way. A parser fix does not close this one: the hint must change. The desk's table
+marks this row "no ticket of its own"; now it has one.
+[Ticket 2](https://github.com/jexor23/mega-s01e03-what-it-shows/issues/2).
+
+### Ticket 3 · the one-day move
+
+Here the date does not swap; it moves by one day. "Invite says Tuesday 12 May. Calendar says
+Monday 11 May." One meeting showed Tuesday in Lisbon and Monday in Toronto. That points at a
+date-only value that goes through a time-zone conversion, not at the parser. The desk read these
+reports as a one-day move (its notes) but files them under `parser` by tenant, so they were
+hidden in that row. [Ticket 3](https://github.com/jexor23/mega-s01e03-what-it-shows/issues/3).
+
+## How this was counted
+
+- One id, one report. The export comes in pages that overlap, so its {reports.length} rows hold {merged.length} reports.
+- The cause comes from the tenant, with the desk's own `causes.ts`, not from intake's tag. Intake guessed from the reporter's browser, and it disagrees with the tenant on {intakeDisagrees} reports.
+- The one-day moves are the reports in the desk's notes (`desk-notes.json`), taken out of the row they are filed under.
+- Every number on this page is computed from the export when the page renders.
+
+<Callout kind="warn">
+Not one bug. The queued parser fix closes ticket 1 only. Ticket 2 needs the booking-v3 hint
+changed, and ticket 3 needs the time-zone handling of dates checked.
+</Callout>
+
+<RenderStamp {signature} />
