@@ -26,9 +26,9 @@ signature: 'v1.eyJzdWIiOiIxMTM0IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpY
 
   const issues = 'https://github.com/jexor23/mega-s01e03-what-it-shows/issues';
   const tickets = [
-    { n: 1, problem: 'The shared parser reads day-first dates month first', reports: filed('parser') },
-    { n: 2, problem: 'The booking-v3 form hints MM/DD/YYYY to day-first tenants', reports: filed('hint') },
-    { n: 3, problem: 'Dates move by one day', reports: merged.filter((r) => notes.oneDayMove.includes(r.id)), footnote: true },
+    { n: 1, problem: 'The shared parser reads day-first dates month first', reports: filed('parser'), state: 'closed · fixed' },
+    { n: 2, problem: 'The booking-v3 form hints MM/DD/YYYY to day-first tenants', reports: filed('hint'), state: "closed · won't fix" },
+    { n: 3, problem: 'Dates move by one day', reports: merged.filter((r) => notes.oneDayMove.includes(r.id)), footnote: true, state: 'open' },
   ];
   const placed = groups.reduce((n, g) => n + g.reports.length, 0);
   const tenants = (rs) => new Set(rs.map((r) => r.tenant)).size;
@@ -53,10 +53,10 @@ Each problem now has a ticket of its own. The counts are the desk's: a report is
 the desk files it, and a report the desk read differently is footnoted there.
 
 <table>
-  <thead><tr><th>ticket</th><th>problem</th><th>reports</th><th>tenants</th><th>seen</th></tr></thead>
+  <thead><tr><th>ticket</th><th>problem</th><th>reports</th><th>tenants</th><th>seen</th><th>state</th></tr></thead>
   <tbody>
     {#each tickets as t (t.n)}
-      <tr><td><a href="{issues}/{t.n}">#{t.n}</a></td><td>{t.problem}</td><td>{t.reports.length}{t.footnote ? ' *' : ''}</td><td>{tenants(t.reports)}</td><td>{seen(t.reports)}</td></tr>
+      <tr><td><a href="{issues}/{t.n}">#{t.n}</a></td><td>{t.problem}</td><td>{t.reports.length}{t.footnote ? ' *' : ''}</td><td>{tenants(t.reports)}</td><td>{seen(t.reports)}</td><td>{t.state}</td></tr>
     {/each}
   </tbody>
 </table>
@@ -87,6 +87,14 @@ date-only value that goes through a time-zone conversion, not at the parser. The
 reports as a one-day move (its notes) and files them under `parser` by tenant, so they were
 hidden in that row. [Ticket 3](https://github.com/jexor23/mega-s01e03-what-it-shows/issues/3).
 
+## Since #4471 closed
+
+Engineering closed #4471 on 5 October:
+
+- **Ticket 1 is fixed** by `fix(dates): parse dd/mm for eu locales`. Closed.
+- **Ticket 2 is won't fix**: the booking-v3 form is retired, so its hint no longer reaches anyone. Closed as not planned.
+- **Ticket 3 stays open.** The update does not mention it, and reading dates day first does not stop a date-only value from moving by one day across time zones. It needs engineering to look at the time-zone handling.
+
 ## How this was counted
 
 - One id, one report. The export comes in pages that overlap, so its {reports.length} rows hold {merged.length} reports.
@@ -95,8 +103,8 @@ hidden in that row. [Ticket 3](https://github.com/jexor23/mega-s01e03-what-it-sh
 - Every number on this page is computed from the export when the page renders.
 
 <Callout kind="warn">
-Not one bug. The queued parser fix closes ticket 1 only. Ticket 2 needs the booking-v3 hint
-changed, and ticket 3 needs the time-zone handling of dates checked.
+Not one bug. The parser fix closed ticket 1 only, and the retired form ended ticket 2. The
+reports in ticket 3 are still open: closing #4471 did not fix them.
 </Callout>
 
 <RenderStamp {signature} />
