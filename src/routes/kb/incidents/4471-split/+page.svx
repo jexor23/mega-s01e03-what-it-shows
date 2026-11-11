@@ -10,7 +10,7 @@ signature: 'v1.eyJzdWIiOiIxMTM0IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpY
 <script>
   import reports from '#lib/data/reports-4471.json';
   import notes from '#lib/data/desk-notes.json';
-  import { groupByCause, uniqueById } from '#lib/kb/causes';
+  import { groupByCause, readAs, uniqueById } from '#lib/kb/causes';
   import { tenantOf } from '#lib/kb/locales';
   import CauseTable from '#lib/kb/CauseTable.svelte';
   import Callout from '#lib/kb/Callout.svelte';
@@ -19,16 +19,18 @@ signature: 'v1.eyJzdWIiOiIxMTM0IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpY
   // The desk's own view of #4471, as exported: one id, one report; the cause comes from the tenant.
   const merged = uniqueById(reports).filter((r) => r.mergedInto === 4471);
   const groups = groupByCause(merged, tenantOf);
-  const read = (r) => notes.oneDayMove.includes(r.id);
-  const filed = (cause) => (groups.find((g) => g.cause === cause)?.reports ?? []).filter((r) => !read(r));
+  const group = (cause) => groups.find((g) => g.cause === cause);
+  const filed = (cause) => group(cause)?.reports ?? [];
+  // As the desk counts: a report the desk read differently stays counted where it is filed.
+  const moved = readAs(group('parser'), notes.oneDayMove);
 
   const issues = 'https://github.com/jexor23/mega-s01e03-what-it-shows/issues';
   const tickets = [
     { n: 1, problem: 'The shared parser reads day-first dates month first', reports: filed('parser') },
     { n: 2, problem: 'The booking-v3 form hints MM/DD/YYYY to day-first tenants', reports: filed('hint') },
-    { n: 3, problem: 'Dates move by one day', reports: merged.filter(read) },
+    { n: 3, problem: 'Dates move by one day', reports: merged.filter((r) => notes.oneDayMove.includes(r.id)), footnote: true },
   ];
-  const placed = tickets.reduce((n, t) => n + t.reports.length, 0);
+  const placed = groups.reduce((n, g) => n + g.reports.length, 0);
   const tenants = (rs) => new Set(rs.map((r) => r.tenant)).size;
   const seen = (rs) => {
     const days = rs.map((r) => r.receivedAt.slice(0, 10)).sort();
@@ -47,25 +49,27 @@ causes, and a note about reports that read as a one-day move.
 
 ## The problems in #4471
 
-Each problem now has a ticket of its own. Every report in #4471 is in exactly one of them.
+Each problem now has a ticket of its own. The counts are the desk's: a report is counted where
+the desk files it, and a report the desk read differently is footnoted there.
 
 <table>
   <thead><tr><th>ticket</th><th>problem</th><th>reports</th><th>tenants</th><th>seen</th></tr></thead>
   <tbody>
     {#each tickets as t (t.n)}
-      <tr><td><a href="{issues}/{t.n}">#{t.n}</a></td><td>{t.problem}</td><td>{t.reports.length}</td><td>{tenants(t.reports)}</td><td>{seen(t.reports)}</td></tr>
+      <tr><td><a href="{issues}/{t.n}">#{t.n}</a></td><td>{t.problem}</td><td>{t.reports.length}{t.footnote ? ' *' : ''}</td><td>{tenants(t.reports)}</td><td>{seen(t.reports)}</td></tr>
     {/each}
   </tbody>
 </table>
 
-<p>{placed} of {merged.length} reports placed.</p>
+<p>* {moved} of ticket 1's reports read as a one-day move. They stay counted under ticket 1, where the desk files them by tenant, and ticket 3 holds them as its own problem. {placed} of {merged.length} reports are counted.</p>
 
 ### Ticket 1 · the parser
 
 People see the day and the month swap: a booking for 2 December comes out on 12 February. The
 shared parser reads every date month first, and every tenant on file writes the day first. This
-ticket holds the reports the desk files under `parser` by tenant, without the ones it read as a
-one-day move. [Ticket 1](https://github.com/jexor23/mega-s01e03-what-it-shows/issues/1).
+ticket holds every report the desk files under `parser` by tenant; {moved} of them read as a
+one-day move and are footnoted to ticket 3.
+[Ticket 1](https://github.com/jexor23/mega-s01e03-what-it-shows/issues/1).
 
 ### Ticket 2 · the booking-v3 date hint
 
@@ -80,14 +84,14 @@ marks this row "no ticket of its own"; now it has one.
 Here the date does not swap; it moves by one day. "Invite says Tuesday 12 May. Calendar says
 Monday 11 May." One meeting showed Tuesday in Lisbon and Monday in Toronto. That points at a
 date-only value that goes through a time-zone conversion, not at the parser. The desk read these
-reports as a one-day move (its notes) but files them under `parser` by tenant, so they were
+reports as a one-day move (its notes) and files them under `parser` by tenant, so they were
 hidden in that row. [Ticket 3](https://github.com/jexor23/mega-s01e03-what-it-shows/issues/3).
 
 ## How this was counted
 
 - One id, one report. The export comes in pages that overlap, so its {reports.length} rows hold {merged.length} reports.
 - The cause comes from the tenant, with the desk's own `causes.ts`, not from intake's tag. Intake guessed from the reporter's browser, and it disagrees with the tenant on {intakeDisagrees} reports.
-- The one-day moves are the reports in the desk's notes (`desk-notes.json`), taken out of the row they are filed under.
+- The one-day moves are the reports in the desk's notes (`desk-notes.json`). As the desk counts, they stay counted in the row they are filed under, with a footnote.
 - Every number on this page is computed from the export when the page renders.
 
 <Callout kind="warn">
